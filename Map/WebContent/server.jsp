@@ -57,7 +57,7 @@ JSONObject result = DBConnector.getTwitterJSON(new String[] {
 	    anchorXUnits: 'fraction',
 	    anchorYUnits: 'pixels',
 	    opacity: 0.75,
-	    src: 'map-marker2.png',
+	    src: 'map-marker.png',
 	    offset: [50, 50]
 	  }))
 	});
