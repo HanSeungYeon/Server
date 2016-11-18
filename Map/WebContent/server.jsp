@@ -13,7 +13,6 @@
 JSONObject result = DBConnector.getTwitterJSON(new String[] {
   minLati, maxLati, minLong, maxLong
 });
-
 //out.print(result.toString());
 %>
 <!DOCTYPE html>
@@ -56,16 +55,15 @@ JSONObject result = DBConnector.getTwitterJSON(new String[] {
 	    anchor: [0.5, 46],
 	    anchorXUnits: 'fraction',
 	    anchorYUnits: 'pixels',
-	    opacity: 0.75,
 	    src: 'map-marker.png',
-	    offset: [50, 50]
+	    opacity: 0.75
+		//scale : 1		//크기
 	  }))
 	});
 	
 	var vectorSource = new ol.source.Vector({
 		  features: iconFeatures //add an array of features
 		});
-
 	var vectorLayer = new ol.layer.Vector({
 		  source: vectorSource,
 		  style: iconStyle
@@ -76,7 +74,6 @@ JSONObject result = DBConnector.getTwitterJSON(new String[] {
     });
    
     var source = new ol.source.Vector({ wrapX: false });
-
     var vector = new ol.layer.Vector({
         source: source,
         style: new ol.style.Style({
@@ -105,7 +102,7 @@ JSONObject result = DBConnector.getTwitterJSON(new String[] {
         target: 'map',
         view: new ol.View({
             center: ol.proj.fromLonLat([126.6827, 35.9447]),//[0,0],
-            zoom: 17
+            zoom: 15
         })
     });
     var element = document.getElementById('popup');
