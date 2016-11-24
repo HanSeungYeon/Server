@@ -1,7 +1,7 @@
 		var raster = new ol.layer.Tile({
             source: new ol.source.OSM()
         });
-
+		
         var mousePositionControl = new ol.control.MousePosition({
             coordinateFormat: ol.coordinate.createStringXY(4),
             projection: 'EPSG:4326',
@@ -44,7 +44,7 @@
             //size: '600px',
             view: new ol.View({
                 center: ol.proj.fromLonLat([126.6827, 35.9447]),//[0,0],
-                zoom: 17
+                zoom: 7
             })
         });
 

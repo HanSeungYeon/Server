@@ -4,6 +4,12 @@
 <%@page import="java.io.*, java.sql.*,twitter4j.*,kr.ac.kunsan.mcalab.*"%>
 <%
     request.setCharacterEncoding("utf-8");
+	/*String cmd = request.getParameter("cmd");
+	if(cmd.equals("range")){
+		
+	}else if (cmd.equals("search")){
+		String comment = request.getParameter("");
+	}*/
     String minLong = request.getParameter("minLong");
     String minLati = request.getParameter("minLati");
     String maxLong = request.getParameter("maxLong");
@@ -13,7 +19,7 @@
 JSONObject result = DBConnector.getTwitterJSON(new String[] {
   minLati, maxLati, minLong, maxLong
 });
-//out.print(result.toString());
+out.print(result.toString());
 %>
 <!DOCTYPE html>
 <html>
@@ -35,7 +41,6 @@ JSONObject result = DBConnector.getTwitterJSON(new String[] {
     <script>
     
     var result = <%=result%>;
-    var popups = [];
     var iconFeatures = [];
 	var element = document.getElementById('popup');
 	
@@ -98,11 +103,12 @@ JSONObject result = DBConnector.getTwitterJSON(new String[] {
                 collapsible: false
             })
         }),
+        loadTilesWhileAnimating : false,
         layers: [raster,vector,vectorLayer],
         target: 'map',
         view: new ol.View({
             center: ol.proj.fromLonLat([126.6827, 35.9447]),//[0,0],
-            zoom: 15
+            zoom: 7
         })
     });
     var element = document.getElementById('popup');
