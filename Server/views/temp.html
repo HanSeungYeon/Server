@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+    <title>TrendMap</title>
+    <link rel="stylesheet"
+          href="http://openlayers.org/en/v3.18.1/css/ol.css" type="text/css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="http://openlayers.org/en/v3.17.1/build/ol.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href="../resources/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="../public/stylesheets/style.css">
+    <script type="text/javascript" src="../resources/jquery-ui-1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+
+	<div id="controll" >
+		<h1>Map</h1><br>
+		<h2>상위 top 10 ID</h2><br>
+			<li>ip</li>
+			<li>config</li>
+			<li>mstsc</li>
+			<li>ios</li>
+			<li>c programming</li>
+		<h2>상위 top Keyword</h2><br>
+			<li>최순실</li>
+			<li>박근혜</li>
+			<li>최순실게이트</li>
+			<li>대한민국</li>
+			<li>최순실 앱</li>
+		<h2>상위 top 10 Block</h2><br>
+		<button id="btn">분석하기</button>
+	</div>
+	
+	<div id="map" class="map"></div>
+</body>
+<script>
+	var minLong;
+	var minLati;
+	var maxLong;
+	var maxLati;
+	var xhr = new XMLHttpRequest();
+	/*event*/
+	//$(function(){
+	//	$("#btn").button();
+	//});
+	//사용자 요청
+	$('#btn').bind('click',function(){
+		var coordinate = {"minLong": 125.7605, "minLati": 34.8409, "maxLong": 129.7156, "maxLati": 37.3863};
+		//브라우저가 서버로부터 응답을 받으면 onload()이벤트 발생.
+		xhr.onload = function() {
+			if(xhr.status == 200) {
+				//서버의 실행결과를 처리할 코드를 이곳에 작성
+				responseObject = JSON.parse(xhr.responseText);
+				//document.getetElementById('').innerHTML = xhr.responseText;
+				console.log("내가왔다 너희를 밟아줄!!!");
+			}
+		}
+		xhr.open('GET','dd.json',true);		//요청준비
+		xhr.send();	//준비된 요청을 전달하는 메소드, 괄호 내에 서버에 전달될 추가 정보를 지정 가능!
+		
+	});
+	
+	
+	
+	var raster = new ol.layer.Tile({
+	    source: new ol.source.OSM()
+	});
+	
+	var source = new ol.source.Vector({ wrapX: false });
+	
+	var vector = new ol.layer.Vector({
+	    source: source,
+	    style: new ol.style.Style({
+	        fill: new ol.style.Fill({
+	            color: 'rgba(255, 255, 255, 0.2)'
+	        }),
+	        stroke: new ol.style.Stroke({
+	            color: '#ffcc33',
+	            width: 2
+	        }),
+	        image: new ol.style.Circle({
+	            radius: 7,
+	            fill: new ol.style.Fill({
+	                color: '#ffcc33'
+	            })
+	        })
+	    })
+	});
+	
+	var map = new ol.Map({
+	    controls: ol.control.defaults({
+	        attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+	            collapsible: false
+	        })
+	    }),
+	    layers: [raster,vector],
+	    target: 'map',
+	    //size: '600px',
+	    view: new ol.View({
+	        center: ol.proj.fromLonLat([126.6827, 35.9447]),//[0,0],
+	        zoom: 7
+	    })
+	});
+	
+	//option
+	/*var projectionSelect = document.getElementById('projection');
+	projectionSelect.addEventListener('change', function (event) {
+	    mousePositionControl.setProjection(ol.proj.get(event.target.value));
+	});
+	
+	var precisionInput = document.getElementById('precision');
+	precisionInput.addEventListener('change', function (event) {
+	    var format = ol.coordinate.createStringXY(event.target.valueAsNumber);
+	    mousePositionControl.setCoordinateFormat(format);
+	});*/
+	
+	var typeSelect = document.getElementById('type');
+	var draw; // global so we can remove it later
+	var temp = null;
+	var start, end;
+	var minLong, maxLong, minLat, maxLat;
+	        
+	function addInteraction() {
+	    var geometryFunction, maxPoints;
+	    value = 'LineString';
+	    maxPoints = 2;
+	
+	    geometryFunction = function (coordinates, geometry) {
+	        if (!geometry) {
+	             geometry = new ol.geom.Polygon(null);
+	          }
+	          start = coordinates[0];
+	          end = coordinates[1];
+	
+	          geometry.setCoordinates([
+	        [start, [start[0], end[1]], end, [end[0], start[1]], start]
+	            ]);
+	            return geometry;
+	    };
+	
+	    draw = new ol.interaction.Draw({
+	        source: source,
+	        type: /** @type {ol.geom.GeometryType} */ (value),
+	        geometryFunction: geometryFunction,
+	        maxPoints: maxPoints,
+	    });
+	   
+	
+	    map.addInteraction(draw);
+	            
+	    drawStart = function () {
+	    	vector.getSource().clear();
+	    }
+	    drawEnd = function () {
+	        var xy1 = transformingCoordinate(start);
+	        var xy2 = transformingCoordinate(end);
+	        setInputPosition(xy1, xy2);
+	    }
+	    draw.on('drawend', drawEnd);    //Event
+	    draw.on('drawstart',drawStart);
+	}
+	
+	/* Function stringSplit
+	 * Parameter string, number
+	 * Return string
+	 * Comment openSource javaScript split
+	 * Modified 7/20 20:00
+	 */
+	
+	function stringSplit(strData, strIndex) {
+	    var stringList = new Array();
+	    while (strData.indexOf(strIndex) != -1) {
+	        stringList[stringList.length] = strData.substring(0, strData.indexOf(strIndex));
+	        strData = strData.substring(strData.indexOf(strIndex) + (strIndex.length), strData.length);
+	    }
+	    stringList[stringList.length] = strData;
+	    return stringList;
+	}
+	
+	/* Function setInputPosition
+	 * Parameter Object(coordinate, coordinate)
+	 * Return 
+	 * Comment print coordinate
+	 * Modified 7/20 20:00
+	 */
+	
+	function setInputPosition(coordinate1, coordinate2) {
+	    if (start !== undefined && end !== undefined) {
+	        var xy1 = stringSplit(coordinate1, ',');
+	        var xy2 = stringSplit(coordinate2, ',');
+	        
+	        
+	        if(xy1[0]<xy2[0]){
+	        	minLong = xy1[0];
+	        	maxLong = xy2[0];
+	        }else{
+	        	minLong = xy2[0];
+	        	maxLong = xy1[0];
+	        }
+	        
+	        if(xy1[1]<xy2[1]){
+	        	minLati = xy1[1];
+	        	maxLati = xy2[1];
+	        }else{
+	        	minLati = xy2[1];
+	        	maxLati = xy1[1];
+	        }
+	        /*
+	        document.getElementById('startX').value = minLong;
+	        document.getElementById('startY').value = minLati;
+	        document.getElementById('endX').value = maxLong;
+	        document.getElementById('endY').value = maxLati;
+	        */
+	        
+	    }
+	}
+	
+	/* Function transformingCoordinate
+	 * Parameter Object(coordinate)
+	 * Return String
+	 * Modified 7/20 20:00
+	 */
+	
+	function transformingCoordinate(coordinate) {
+	    var point = ol.proj.toLonLat(coordinate, 'EPSG:3857');
+	    var stringifyFunc = ol.coordinate.createStringXY(4);
+	    var out = stringifyFunc(point);
+	    return out;
+	}
+	addInteraction();
+</script>
+</html>

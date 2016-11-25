@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+    <title>TrendMap</title>
+    <link rel="stylesheet"
+          href="http://openlayers.org/en/v3.18.1/css/ol.css" type="text/css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="http://openlayers.org/en/v3.17.1/build/ol.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href='/resources/jquery-ui-1.12.1/jquery-ui.css'>
+    <link rel="stylesheet" href='/public/stylesheets/style.css'>
+    <script type = "text/javascript" src="/resources/jqwidgets-ver4.3.0/jqwidgets/jqxcore.js"></script>
+    <script type = "text/javascript" src="/resources/jqwidgets-ver4.3.0/jqwidgets/jqxbuttons.js"></script>
+    <link rel="stylesheet" href="/resources/jqwidgets-ver4.3.0/jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="/resources/jqwidgets-ver4.3.0/jqwidgets/styles/jqx.darkblue.css" type="text/css" />
+    <script type="text/javascript" src='/resources/jquery-ui-1.12.1/jquery-ui.js'></script>
+</head>
+<body>
+	<div id="controll" >
+		<h1>TrendMap</h1><br>
+		<left><p>Developer</p></left>
+		<h2 id = "topID">Top 10 Name</h2><br>
+		<ol id = "topList"></ol>
+		<h2>Top 10 Word</h2><br>
+		<ol id = "topWordList"></ol>
+		<center><button id="btn">분석하기</button></center>
+		<!--<center><button id="btnMark">마커생성</button></center>-->
+	</div>
+	
+	<div id="map" class="map"><div id="popup"></div>
+</body>
+<script type="text/javascript" src='/public/js/map.js'></script>
+</html>
